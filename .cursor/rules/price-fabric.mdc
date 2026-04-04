@@ -1,0 +1,19 @@
+---
+description: Core context and rules for Price Fabric project
+globs: *
+alwaysApply: true
+---
+
+# Price Fabric
+
+## Tech Stack
+Python, PricesAPI, Confluent Kafka, GitHub Actions, Microsoft Fabric (downstream).
+
+## Code Style
+`snake_case` for functions/variables, `PascalCase` for classes, strict type hints.
+
+## Subagents
+Delegate shell commands to the `shell` subagent; codebase search to `explore`.
+
+## Fabric naming
+Eventstream `es_prices_ingestion`; Bronze `raw_prices_stream`; Silver `silver_product_catalog`, `silver_price_history`; Gold `gold_competitor_gaps`, `gold_reliability_scores`.
