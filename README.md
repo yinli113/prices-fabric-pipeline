@@ -21,4 +21,6 @@ Alternatively leave `SEARCH_QUERY` empty and set **`TARGET_PRODUCT_IDS`** to com
 
 **Azure Event Hubs:** Create an Event Hub named `competition-prices` (or your `EVENTHUB_NAME`).
 
+**Automation:** Push this repo to GitHub and add the secrets above. The `.github/workflows/hourly_run.yml` action will run every hour at minute 0.
+
 If keys were ever committed, rotate them in PricesAPI and Azure.
