@@ -1,10 +1,32 @@
 # 🛒 Real-Time E-Commerce Price Intelligence Pipeline
 
-![Power BI Dashboard](image/PowerBI.png)
+![Power BI Dashboard - Shopper View](image/PowerBI.png)
+![Power BI Dashboard - Retailer View](image/Dashboard2.png)
 
 An end-to-end **Real-Time Data Engineering Pipeline** that scrapes live e-commerce pricing data, processes it through a streaming message broker, refines it using a Medallion Architecture, and serves it to a zero-latency Power BI dashboard.
 
 ## 🏗️ Architecture Overview
+
+```mermaid
+flowchart LR
+    A[PricesAPI REST] -->|Python Producer| B(Azure Event Hubs)
+    B -->|Streaming| C(Fabric Eventstream)
+    C --> D[(KQL Eventhouse)]
+    
+    subgraph Medallion Architecture [KQL Medallion Architecture]
+    D -->|Append-Only JSON| E[Bronze Layer]
+    E -->|KQL Extract & Type Cast| F[Silver Layer]
+    F -->|KQL Normalize & Filter| G[Gold Layer]
+    end
+    
+    G -->|DirectQuery| H[Power BI Dashboards]
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#0072C6,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#0078D4,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#0078D4,stroke:#fff,stroke-width:2px,color:#fff
+    style H fill:#F2C811,stroke:#333,stroke-width:2px
+```
 
 This project implements a modern real-time data stack using **Microsoft Fabric** and **Azure Event Hubs** (Kafka compatible).
 
