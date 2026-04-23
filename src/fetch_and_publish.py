@@ -64,17 +64,23 @@ def fetch_product_prices(product_id: str) -> Dict[str, Any]:
     )
 
 
+def parse_eventhub_broker(connection_string: str) -> str:
+    for part in connection_string.split(";"):
+        if part.startswith("Endpoint=sb://"):
+            broker = part.replace("Endpoint=sb://", "").rstrip("/")
+            if broker:
+                return broker
+    raise ValueError(
+        "EVENTHUB_CONNECTION_STRING is invalid: could not extract Event Hubs broker"
+    )
+
+
 def create_kafka_producer() -> Producer:
     # Azure Event Hubs uses the exact same Kafka Producer library!
     # We just parse the connection string to find the broker.
-    
+
     conn_str = Config.EVENTHUB_CONNECTION_STRING
-    # Extract the hostname from "Endpoint=sb://<hostname>/;SharedAccessKeyName=..."
-    broker = ""
-    for part in conn_str.split(";"):
-        if part.startswith("Endpoint=sb://"):
-            broker = part.replace("Endpoint=sb://", "").rstrip("/")
-            break
+    broker = parse_eventhub_broker(conn_str)
 
     conf: dict[str, str] = {
         "bootstrap.servers": f"{broker}:9093",
@@ -136,6 +142,7 @@ def main() -> None:
                     value=payload,
                     callback=delivery_report,
                 )
+                producer.poll(0)
             else:
                 logger.warning("No successful data for product ID %s", product_id)
         except Exception as exc:
